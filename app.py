@@ -3,19 +3,16 @@ import whisper
 import os
 
 app = Flask(__name__)
-UPLOAD_FOLDER = "uploads"
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+model = whisper.load_model("base")
 
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
         file = request.files["file"]
-        filepath = os.path.join(UPLOAD_FOLDER, file.filename)
+        filepath = os.path.join("uploads", file.filename)
         file.save(filepath)
 
-        model = whisper.load_model("base")
         result = model.transcribe(filepath, language="tr")
-
         output_text = ""
         for segment in result["segments"]:
             start = int(segment["start"])
@@ -34,4 +31,5 @@ def index():
     '''
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
