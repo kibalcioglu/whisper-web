@@ -3,7 +3,8 @@ import whisper
 import os
 
 app = Flask(__name__)
-model = whisper.load_model("base")
+model = whisper.load_model("tiny")
+print("🎯 Yüklenen model boyutu:", os.path.getsize(model.model_path) / 1024 / 1024, "MB")
 
 @app.route("/", methods=["GET", "POST"])
 def index():
